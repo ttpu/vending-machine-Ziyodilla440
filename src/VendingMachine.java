@@ -58,7 +58,42 @@ public class VendingMachine {
             card.credit += credit;
         }
     }
+    public double getCredit(int cardId) {
+        Card card = cards.get(cardId);
+        return (card == null) ? -1.0 : card.credit;
+    }
 
+    public void refillColumn(int column, String beverageName, int cans) {
+        if (column >= 1 && column <= 4) {
+            columns[column - 1] = new Column(beverageName, cans);
+        }
+    }
+
+    public int availableCans(String beverageName) {
+        int total = 0;
+        for (Column col : columns) {
+            if (beverageName.equals(col.beverageName)) {
+                total += col.cans;
+            }
+        }
+        return total;
+    }
+
+    public int sell(String beverageName, int cardId) {
+        Beverage beverage = beverages.get(beverageName);
+        Card card = cards.get(cardId);
+
+        if (beverage == null || card == null) return -1;
+        if (card.credit < beverage.price) return -1;
+    
+        for (int i = 0; i < 4; i++) {
+            Column col = columns[i];
+            if (beverageName.equals(col.beverageName) && col.cans > 0) {
+                col.cans--;
+                card.credit -= beverage.price;
+                return i + 1; 
+            }
+        }
 
 
         return -1; 
